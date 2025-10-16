@@ -25,4 +25,16 @@ public class RecommendationService {
   public List<TourSummary> getRecommendationsForCustomer(int customerId, int limit) {
     return tourRatingRepository.findRecommendedForCustomer(customerId, PageRequest.of(0, limit));
   }
+
+  // --- Methods expected by RecommendationController & its tests ---
+
+  /** Alias expected by the controller/tests. */
+  public List<TourSummary> top(int limit) {
+    return getTopRatedTours(limit);
+  }
+
+  /** Alias expected by the controller/tests. */
+  public List<TourSummary> byCustomer(int customerId, int limit) {
+    return getRecommendationsForCustomer(customerId, limit);
+  }
 }
