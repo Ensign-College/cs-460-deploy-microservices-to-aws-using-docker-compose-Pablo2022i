@@ -6,6 +6,8 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.domain.Pageable;
 
 import com.example.explorecalijpa.model.TourRating;
 
@@ -33,4 +35,30 @@ public interface TourRatingRepository extends JpaRepository<TourRating, Integer>
    * @return TourRating if found, null otherwise.
    */
   Optional<TourRating> findByTourIdAndCustomerId(Integer tourId, Integer customerId);
+
+  @Query("""
+         select tr.tour.id as tourId,
+                tr.tour.title as title,
+                avg(tr.score) as avgScore,
+                count(tr.id) as reviewCount
+         from TourRating tr
+         group by tr.tour.id, tr.tour.title
+         order by avg(tr.score) desc, count(tr.id) desc, tr.tour.title asc
+      """)
+  List<com.example.explorecalijpa.recommendation.TourSummary> findTopTours(Pageable pageable);
+
+  @Query("""
+         select tr.tour.id as tourId,
+                tr.tour.title as title,
+                avg(tr.score) as avgScore,
+                count(tr.id) as reviewCount
+         from TourRating tr
+         where tr.tour.id not in (
+             select r.tour.id from TourRating r where r.customerId = :customerId
+         )
+         group by tr.tour.id, tr.tour.title
+         order by avg(tr.score) desc, count(tr.id) desc, tr.tour.title asc
+      """)
+  List<com.example.explorecalijpa.recommendation.TourSummary> findRecommendedForCustomer(
+      int customerId, Pageable pageable);
 }
