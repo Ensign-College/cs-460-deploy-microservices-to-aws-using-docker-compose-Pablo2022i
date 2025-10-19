@@ -1,10 +1,22 @@
-# Create a tour package
-curl -X POST http://localhost:8080/packages \
-  -H 'Content-Type: application/json' \
+# Unauthenticated (Expect 401)
+curl -i https://didactic-spoon-66pv94p7jpwcrgv4-8080.app.github.dev/packages
+
+# Authenticated Read (any user) → 200 OK
+curl -i -u user:password https://didactic-spoon-66pv94p7jpwcrgv4-8080.app.github.dev/packages
+curl -i -u user:password https://didactic-spoon-66pv94p7jpwcrgv4-8080.app.github.dev/tours/1/ratings
+
+# User tries to mutate (Expect 403 Forbidden)
+curl -i -u user:password -X POST https://didactic-spoon-66pv94p7jpwcrgv4-8080.app.github.dev/packages \
+  -H "Content-Type: application/json" \
   -d '{"code":"BB","name":"Beekeepers you Betcha"}'
 
-# List tour packages
-curl http://localhost:8080/packages
+# Admin can mutate (Expect 2xx)
+curl -i -u admin:admin123 -X POST https://didactic-spoon-66pv94p7jpwcrgv4-8080.app.github.dev/packages \
+  -H "Content-Type: application/json" \
+  -d '{"code":"BB","name":"Beekeepers you Betcha"}'
 
-# Delete the tour package
-curl -X DELETE http://localhost:8080/packages/BB
+curl -i -u admin:admin123 -X DELETE https://didactic-spoon-66pv94p7jpwcrgv4-8080.app.github.dev/packages/BB
+
+# Public endpoints (no auth required)
+curl -i https://didactic-spoon-66pv94p7jpwcrgv4-8080.app.github.dev/actuator/health
+curl -i https://didactic-spoon-66pv94p7jpwcrgv4-8080.app.github.dev/swagger-ui/index.html
