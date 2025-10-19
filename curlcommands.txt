@@ -20,3 +20,13 @@ curl -i -u admin:admin123 -X DELETE https://didactic-spoon-66pv94p7jpwcrgv4-8080
 # Public endpoints (no auth required)
 curl -i https://didactic-spoon-66pv94p7jpwcrgv4-8080.app.github.dev/actuator/health
 curl -i https://didactic-spoon-66pv94p7jpwcrgv4-8080.app.github.dev/swagger-ui/index.html
+
+# Feature Flag
+# Enable ratings:
+#   features.tour-ratings=true
+# Disable ratings:
+#   features.tour-ratings=false
+
+# Auth
+curl -i -u admin:admin123 https://didactic-spoon-66pv94p7jpwcrgv4-8080.app.github.dev/tours/1/ratings
+
